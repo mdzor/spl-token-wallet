@@ -6,9 +6,16 @@ import Paper from '@material-ui/core/Paper';
 import {
   refreshWalletPublicKeys,
   useBalanceInfo,
+  useTransactionsHistory,
   useWallet,
   useWalletPublicKeys,
+  useTransactionsHistory2,
 } from '../utils/wallet';
+import {
+  setInitialAccountInfo,
+  useAccountInfo,
+  useConnection,
+} from '../utils/connection';
 import LoadingIndicator from './LoadingIndicator';
 import Collapse from '@material-ui/core/Collapse';
 import { Typography } from '@material-ui/core';
@@ -31,6 +38,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import AddTokenDialog from './AddTokenDialog';
 import SendDialog from './SendDialog';
 import DepositDialog from './DepositDialog';
+import TransactionList from './TransactionList';
 import {
   refreshAccountInfo,
   useSolanaExplorerUrlSuffix,
@@ -146,6 +154,7 @@ function BalanceListItem({ publicKey }) {
 
 function BalanceListItemDetails({ publicKey, balanceInfo }) {
   const urlSuffix = useSolanaExplorerUrlSuffix();
+  const transactions = useTransactionsHistory(publicKey);
   const classes = useStyles();
   const [sendDialogOpen, setSendDialogOpen] = useState(false);
   const [depositDialogOpen, setDepositDialogOpen] = useState(false);
@@ -233,6 +242,13 @@ function BalanceListItemDetails({ publicKey, balanceInfo }) {
         balanceInfo={balanceInfo}
         publicKey={publicKey}
       />
+      {
+        (transactions) ?
+        console.log("Err getting the tx history", transactions.then((tx) => { tx.map((t) => (console.log("Fee: ", t)))})):
+        <TransactionList
+          transactions={transactions}
+        />
+      }
     </>
   );
 }

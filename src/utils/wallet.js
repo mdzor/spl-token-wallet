@@ -138,6 +138,34 @@ export function refreshWalletPublicKeys(wallet) {
   refreshCache(wallet.getTokenPublicKeys);
 }
 
+export async function useTransactionsHistory(publicKey) {
+  let wallet = useWallet();
+  let signatures = await wallet.connection.getConfirmedSignaturesForAddress2(publicKey)
+  let txs = []
+  for (let sign of signatures) {
+    txs.push(await wallet.connection.getConfirmedTransaction(sign.signature))
+  }
+  return txs
+  // if (txs || true) {
+  //   return [
+  //     {
+  //       fee: 5000,
+  //       signature: "test",
+  //     },
+  //     {
+  //       fee: 12,
+  //       signature: "testtest",
+  //     },
+  // ]
+  // }
+}
+
+export function useTransactionsHistory2(publicKey) {
+  let wallet = useWallet();
+  let result = new Promise( (resolve,reject) => resolve(wallet.connection.getConfirmedSignaturesForAddress2(publicKey)),);
+  return result
+}
+
 export function useBalanceInfo(publicKey) {
   let [accountInfo, accountInfoLoaded] = useAccountInfo(publicKey);
   let { mint, owner, amount } = accountInfo?.owner.equals(TOKEN_PROGRAM_ID)
